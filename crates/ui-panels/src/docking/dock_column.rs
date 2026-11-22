@@ -456,6 +456,11 @@ impl<P: Value + Debug + Hash + 'static> Component for DockColumn<'_, P> {
         let Some(plan) = self.laid.as_ref() else { return };
         // Painted here, not as the container's surface, which lies over what `paint` draws.
         ui.draw().surface(cx.rect, SurfaceKind::Panel, Corners::All);
+        // A tool rail paints its chrome only as tall as its slots and footer; under it the column keeps the rail's
+        // chrome down to its bottom, as the references' docked toolbar does, instead of the panel surface.
+        if cx.style.sizes.stepped(self.column, self.spec).is_some() {
+            ui.draw().surface(plan.body, SurfaceKind::Chrome, Corners::All);
+        }
         if self.bar == ColumnBar::Own {
             ui.draw().surface(plan.bar, SurfaceKind::Background, Corners::None);
             if self.arrow.shown() {
