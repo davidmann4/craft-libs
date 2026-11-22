@@ -458,7 +458,7 @@ impl<P: Value + Debug + Hash + 'static> Component for DockColumn<'_, P> {
         ui.draw().surface(cx.rect, SurfaceKind::Panel, Corners::All);
         // A tool rail paints its chrome only as tall as its slots and footer; under it the column keeps the rail's
         // chrome down to its bottom, as the references' docked toolbar does, instead of the panel surface.
-        if cx.style.sizes.stepped(self.column, self.spec).is_some() {
+        if self.column.panels().any(|panel| (self.spec)(panel).grid.is_some()) {
             ui.draw().surface(plan.body, SurfaceKind::Chrome, Corners::All);
         }
         if self.bar == ColumnBar::Own {
